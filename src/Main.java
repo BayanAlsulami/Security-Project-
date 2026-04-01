@@ -1,4 +1,4 @@
-import java.util.Scanner;
+/*import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -63,5 +63,53 @@ public class Main {
         }
 
         input.close();
+    }
+}
+*/
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+
+        try {
+            System.out.print("Enter number of passengers: ");
+            int passengers = input.nextInt();
+
+            System.out.print("Enter number of rental days: ");
+            int days = input.nextInt();
+
+            System.out.print("Enter estimated mileage: ");
+            double mileage = input.nextDouble();
+
+            // التحقق من المدخلات (Security Requirement)
+            if (passengers <= 0 || days <= 0 || mileage < 0) {
+                System.out.println("Invalid input: Values must be positive.");
+                return;
+            }
+
+            Car[] cars = CarData.getCars();
+            // استدعاء المنطق الصحيح لاختيار أفضل سيارة
+            Car bestCar = CarService.findBestCar(cars, passengers, days, mileage);
+
+            if (bestCar != null) {
+                System.out.println("\n--- Best Suitable Car ---");
+                System.out.println("Car: " + bestCar.getMakeModel());
+                System.out.println("Max Passengers: " + bestCar.getMaxPassengers());
+
+                double totalCost = CarService.calculateTotalCost(
+                        bestCar.getDailyCost(), days, mileage, bestCar.getMpg());
+
+                System.out.printf("Total Cost: $%.2f\n", totalCost);
+            } else {
+                System.out.println("No suitable cars found for " + passengers + " passengers.");
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error: Invalid input type. Please enter numeric values.");
+        } finally {
+            input.close();
+        }
     }
 }

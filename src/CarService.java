@@ -28,41 +28,40 @@ class CarService {
     //least privilege
     
 //نحسب افضل سيارة
-    public static Car findBestCar(Car[] cars, int passengers, int days, double mileage) {
+// حساب أفضل سيارة بناءً على التكلفة ثم مستوى الراحة
+public static Car findBestCar(Car[] cars, int passengers, int days, double mileage) {
 
-        Car bestCar = null;// هنا تتخزن افضل سيارة
-        double lowestCost = Double.MAX_VALUE;//simplicity of design
+    Car bestCar = null; // هنا ستخزن أفضل سيارة يتم العثور عليها
+    double lowestCost = Double.MAX_VALUE; // نبدأ بأعلى قيمة ممكنة للمقارنة
 
-        for (هnt i=0 ; i<cars.length ; i++) {
-//اذا السياره تتحمل عدد الركاب
-        	//least privilege
-            if (car.maxPassengers >= passengers) {
-            	Car car = cars[i];
-//توتال التكلفه لهالسياره
-                double totalCost = calculateTotalCost(
-                        car.dailyRate,
-                        days,
-                        mileage,
-                        car.mpg
-                );
+    for (int i = 0; i < cars.length; i++) {
+        Car car = cars[i]; // تعريف الكائن أولاً للوصول لبياناته
 
-                //اذا هذي ارخص من اللي قبلها تصير هي الافضل
-                if (totalCost < lowestCost) {
-                    lowestCost = totalCost;
+        // التحقق مما إذا كانت السيارة تستوعب عدد الركاب [cite: 3, 42, 45]
+        if (car.getMaxPassengers() >= passengers) {
+
+            // حساب التكلفة الإجمالية باستخدام الدوال الجالبة (Getters)
+            double totalCost = calculateTotalCost(
+                    car.getDailyCost(),
+                    days,
+                    mileage,
+                    car.getMpg()
+            );
+
+            // 1. إذا كانت هذه السيارة أرخص من التي قبلها، تصبح هي الأفضل [cite: 2, 46]
+            if (totalCost < lowestCost) {
+                lowestCost = totalCost;
+                bestCar = car;
+            }
+            // 2. إذا تساوت التكلفة، نختار السيارة ذات مستوى الراحة الأعلى [cite: 46]
+            else if (totalCost == lowestCost && bestCar != null) {
+                if (getComfortValue(car.getComfortLevel()) > getComfortValue(bestCar.getComfortLevel())) {
                     bestCar = car;
-                }
-
-                // هذي الاضافه حقت اذا سيارتين نفس السعر يصير ناخذ الcomfort 
-                else if (totalCost == lowestCost && bestCar != null) {
-
-                    // نقارن الراحة
-                    if (getComfortValue(car.comfortLevel) > getComfortValue(bestCar.comfortLevel)) {
-                        bestCar = car;
-                    }
                 }
             }
         }
-
-        return bestCar;
     }
+
+    return bestCar;
+}
 }
